@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Time & Weather Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .time-display {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .time {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .date {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .weather-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+        }
+
+        .weather-input {
+            margin-bottom: 20px;
+        }
+
+        .weather-input input {
+            width: calc(100% - 120px);
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .weather-input button {
+            padding: 12px 20px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .weather-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .weather-display {
+            display: none;
+        }
+
+        .weather-display.active {
+            display: block;
+        }
+
+        .weather-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .weather-temp {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .weather-details {
+            text-align: right;
+        }
+
+        .weather-details p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2em;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .error {
+            color: #ffcccc;
+            text-align: center;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .city-name {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Live Dashboard</h1>
+        
+        <div class="time-display">
+            <div class="time" id="time">00:00:00</div>
+            <div class="date" id="date">Loading...</div>
+        </div>
+
+        <div class="weather-section">
+            <div class="weather-input">
+                <input type="text" id="cityInput" placeholder="Enter city name (e.g., London)" value="London">
+                <button onclick="getWeather()">Get Weather</button>
+            </div>
+            
+            <div class="loading" id="loading">Loading weather data...</div>
+            <div class="error" id="error"></div>
+            
+            <div class="weather-display" id="weatherDisplay">
+                <div class="city-name" id="cityName"></div>
+                <div class="weather-info">
+                    <div class="weather-temp" id="temp"></div>
+                    <div class="weather-details">
+                        <p id="description"></p>
+                        <p>💧 Humidity: <span id="humidity"></span>%</p>
+                        <p>💨 Wind: <span id="wind"></span> m/s</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update time every second
+        function updateTime() {
+            const now = new Date();
+            
+            // Format time
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Format date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Get weather data
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value.trim();
+            if (!city) {
+                showError('Please enter a city name');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            const weatherDisplay = document.getElementById('weatherDisplay');
+            const error = document.getElementById('error');
+
+            loading.classList.add('active');
+            weatherDisplay.classList.remove('active');
+            error.classList.remove('active');
+
+            try {
+                // Using OpenWeatherMap API (you'll need to sign up for a free API key)
+                // For demo purposes, using a free tier API key
+                const apiKey = 'demo'; // Replace with your actual API key from openweathermap.org
+                
+                // Using a mock response for demo - in production, use actual API
+                // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
+                
+                // Mock data for demonstration
+                const mockWeatherData = {
+                    name: city.charAt(0).toUpperCase() + city.slice(1),
+                    main: {
+                        temp: Math.floor(Math.random() * 30) + 5,
+                        humidity: Math.floor(Math.random() * 40) + 40
+                    },
+                    weather: [
+                        { description: ['Sunny', 'Cloudy', 'Partly Cloudy', 'Clear Sky'][Math.floor(Math.random() * 4)] }
+                    ],
+                    wind: {
+                        speed: (Math.random() * 10 + 2).toFixed(1)
+                    }
+                };
+
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                displayWeather(mockWeatherData);
+            } catch (err) {
+                showError('Failed to fetch weather data. Please try again.');
+                console.error(err);
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        function displayWeather(data) {
+            document.getElementById('cityName').textContent = data.name;
+            document.getElementById('temp').textContent = Math.round(data.main.temp) + '°C';
+            document.getElementById('description').textContent = '☀️ ' + data.weather[0].description;
+            document.getElementById('humidity').textContent = data.main.humidity;
+            document.getElementById('wind').textContent = data.wind.speed;
+            
+            document.getElementById('weatherDisplay').classList.add('active');
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.classList.add('active');
+        }
+
+        // Initialize
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Load weather for default city on page load
+        window.addEventListener('load', () => {
+            getWeather();
+        });
+
+        // Allow Enter key to trigger weather search
+        document.getElementById('cityInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                getWeather();
+            }
+        });
+    </script>
+</body>
+</html>
