@@ -1,0 +1,16 @@
+{
+  "name": "weather-dashboard",
+  "version": "1.0.0",
+  "description": "Live time and weather dashboard",
+  "scripts": {
+    "test": "echo \"Running tests...\" && exit 0",
+    "build": "echo \"Building project...\" && mkdir -p dist && cp index.html dist/",
+    "start": "echo \"Starting local server...\" && python3 -m http.server 8000"
+  },
+  "keywords": ["weather", "dashboard", "jenkins"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
